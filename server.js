@@ -32,12 +32,29 @@ const {
   SLACK_CLIENT_ID,
   SLACK_CLIENT_SECRET,
   SLACK_SIGNING_SECRET,
+  SLACK_BOT_TOKEN, // optional fallback, see getTeamToken() below
   APP_URL,
   PORT = 3000,
 } = process.env;
 
 // In-memory store: { [teamId]: { botToken } }
 const teams = {};
+
+/**
+ * Look up a team's bot token. Falls back to SLACK_BOT_TOKEN from the
+ * environment if the team isn't in memory yet — useful when the app was
+ * installed via Slack's own dashboard "Install to Workspace" button, which
+ * doesn't go through our /slack/oauth/callback route.
+ */
+function getTeamToken(teamId) {
+  if (teams[teamId]) {
+    return teams[teamId].botToken;
+  }
+  if (SLACK_BOT_TOKEN) {
+    return SLACK_BOT_TOKEN;
+  }
+  return null;
+}
 
 /**
  * Slack requires the raw request body to verify the signature, so we
@@ -158,8 +175,8 @@ app.get('/slack/oauth/callback', async (req, res) => {
 app.post('/slack/kudos', verifySlackSignature, async (req, res) => {
   const { team_id: teamId, channel_id: channelId, user_id: userId, text } = req.body;
 
-  const team = teams[teamId];
-  if (!team) {
+  const botToken = getTeamToken(teamId);
+  if (!botToken) {
     return res.json({
       response_type: 'ephemeral',
       text: 'This workspace needs to reinstall the app. Please contact your admin.',
@@ -182,7 +199,7 @@ app.post('/slack/kudos', verifySlackSignature, async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${team.botToken}`,
+          Authorization: `Bearer ${botToken}`,
           'Content-Type': 'application/json',
         },
       }
