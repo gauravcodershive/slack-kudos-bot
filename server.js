@@ -198,7 +198,7 @@ app.post('/slack/kudos', verifySlackSignature, async (req, res) => {
   }
 
   try {
-    await axios.post(
+    const slackResponse = await axios.post(
       'https://slack.com/api/chat.postMessage',
       {
         channel: channelId,
@@ -211,6 +211,14 @@ app.post('/slack/kudos', verifySlackSignature, async (req, res) => {
         },
       }
     );
+
+    if (!slackResponse.data.ok) {
+      console.error('Slack API returned an error:', slackResponse.data.error);
+      return res.json({
+        response_type: 'ephemeral',
+        text: `Slack rejected the message: ${slackResponse.data.error}`,
+      });
+    }
 
     // Empty 200 response — the public message was already posted above,
     // so we don't need a separate visible reply to the command itself.
