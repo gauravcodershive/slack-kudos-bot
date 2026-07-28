@@ -70,6 +70,11 @@ app.use(
 );
 app.use(express.json());
 
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.path}`);
+  next();
+});
+
 /**
  * Verifies that a request genuinely came from Slack, using the signing
  * secret and Slack's HMAC signature scheme. Rejects anything that fails,
@@ -174,6 +179,8 @@ app.get('/slack/oauth/callback', async (req, res) => {
  */
 app.post('/slack/kudos', verifySlackSignature, async (req, res) => {
   const { team_id: teamId, channel_id: channelId, user_id: userId, text } = req.body;
+
+  console.log('Received /kudos command:', { teamId, channelId, userId, text });
 
   const botToken = getTeamToken(teamId);
   if (!botToken) {
