@@ -1,0 +1,7 @@
+# Support — Kudos Slack App
+
+## How to use Kudos
+
+Type `/kudos @teammate your message` in any channel where the app is installed and invited. It will post a public message recognizing that teammate.
+
+If the app doesn't respond, make sure it has been invited to the channel:
