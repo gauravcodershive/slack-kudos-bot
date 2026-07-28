@@ -1,0 +1,17 @@
+{
+  "name": "slack-kudos-bot",
+  "version": "1.0.0",
+  "description": "Slack slash-command app that lets teammates publicly recognize each other with /kudos.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

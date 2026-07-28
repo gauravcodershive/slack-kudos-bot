@@ -1,0 +1,5 @@
+SLACK_CLIENT_ID=your_client_id_from_slack_app_dashboard
+SLACK_CLIENT_SECRET=your_client_secret_from_slack_app_dashboard
+SLACK_SIGNING_SECRET=your_signing_secret_from_slack_app_dashboard
+APP_URL=https://your-deployed-app-url.com
+PORT=3000
